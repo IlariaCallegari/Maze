@@ -1,12 +1,14 @@
 //acquiring properties from Matter
 const { Engine, Render, Runner, World, Bodies, Body, Events } = Matter;
 
-const cells = 3;
-const width = 600;
-const height = 600;
+const cellsHorizontal = 30;
+const cellsVertical = 20;
+const width = window.innerWidth - 10;
+const height = window.innerHeight - 10;
 
 //define our dimensions for the walls
-const unitLenght = width / cells;
+const unitLenghtX = width / cellsHorizontal;
+const unitLenghtY = height / cellsVertical;
 
 //Boilerplate code
 const engine = Engine.create();
@@ -19,6 +21,7 @@ const render = Render.create({
   options: {
     width,
     height,
+    wireframes: false,
   },
 });
 
@@ -50,21 +53,21 @@ const shuffle = (arr) => {
   return arr;
 };
 //Grid
-const grid = Array(cells)
+const grid = Array(cellsVertical)
   .fill(null)
-  .map(() => Array(cells).fill(false));
+  .map(() => Array(cellsHorizontal).fill(false));
 
-const verticals = Array(cells)
+const verticals = Array(cellsVertical)
   .fill(null)
-  .map(() => Array(cells - 1).fill(false));
+  .map(() => Array(cellsHorizontal - 1).fill(false));
 
-const horizontals = Array(cells - 1)
+const horizontals = Array(cellsVertical - 1)
   .fill(null)
-  .map(() => Array(cells).fill(false));
+  .map(() => Array(cellsHorizontal).fill(false));
 
 //pick a random cell to start the maze
-const startRow = Math.floor(Math.random() * cells);
-const startColumn = Math.floor(Math.random() * cells);
+const startRow = Math.floor(Math.random() * cellsVertical);
+const startColumn = Math.floor(Math.random() * cellsHorizontal);
 
 const stepThoroughCell = (row, column) => {
   //if I have visited the cell at row, column then return
@@ -88,9 +91,9 @@ const stepThoroughCell = (row, column) => {
     //check if that neighbour is out of bounds
     if (
       nextRow < 0 ||
-      nextRow >= cells ||
+      nextRow >= cellsVertical ||
       nextColumn < 0 ||
-      nextColumn >= cells
+      nextColumn >= cellsHorizontal
     ) {
       continue;
     }
@@ -121,12 +124,16 @@ horizontals.forEach((row, rowIndex) => {
       return;
     } else {
       const wall = Bodies.rectangle(
-        columnIndex * unitLenght + unitLenght / 2,
-        rowIndex * unitLenght + unitLenght,
-        unitLenght,
+        columnIndex * unitLenghtX + unitLenghtX / 2,
+        rowIndex * unitLenghtY + unitLenghtY,
+        unitLenghtX,
         3,
         {
           isStatic: true,
+          label: "wall",
+          render: {
+            fillStyle: "#fbbbb9",
+          },
         }
       );
       World.add(world, wall);
@@ -141,12 +148,16 @@ verticals.forEach((row, rowIndex) => {
       return;
     } else {
       const wall = Bodies.rectangle(
-        columnIndex * unitLenght + unitLenght,
-        rowIndex * unitLenght + unitLenght / 2,
+        columnIndex * unitLenghtX + unitLenghtX,
+        rowIndex * unitLenghtY + unitLenghtY / 2,
         3,
-        unitLenght,
+        unitLenghtY,
         {
           isStatic: true,
+          label: "wall",
+          render: {
+            fillStyle: "#fbbbb9",
+          },
         }
       );
       World.add(world, wall);
@@ -156,20 +167,27 @@ verticals.forEach((row, rowIndex) => {
 
 //goal
 const goal = Bodies.rectangle(
-  width - unitLenght / 2,
-  height - unitLenght / 2,
-  unitLenght * 0.7,
-  unitLenght * 0.7,
+  width - unitLenghtX / 2,
+  height - unitLenghtY / 2,
+  unitLenghtX * 0.7,
+  unitLenghtY * 0.7,
   {
     label: "goal",
     isStatic: true,
+    render: {
+      fillStyle: "#008080",
+    },
   }
 );
 World.add(world, goal);
 
 //ball
-const ball = Bodies.circle(unitLenght / 2, unitLenght / 2, unitLenght * 0.4, {
+const ballRadius = Math.min(unitLenghtX, unitLenghtY) * 0.4;
+const ball = Bodies.circle(unitLenghtX / 2, unitLenghtY / 2, ballRadius, {
   label: "ball",
+  render: {
+    fillStyle: "#95B9C7",
+  },
 });
 World.add(world, ball);
 
@@ -193,13 +211,19 @@ document.addEventListener("keydown", (event) => {
 
 //Win condition
 Events.on(engine, "collisionStart", (event) => {
-  event.pairs.forEach(collision => {
+  event.pairs.forEach((collision) => {
     const labels = ["ball", "goal"];
     if (
       labels.includes(collision.bodyA.label) &&
       labels.includes(collision.bodyB.label)
     ) {
-      console.log("user won");
+        document.querySelector('.hidden').classList.add('winner');
+      world.gravity.y = 1;
+      world.bodies.forEach((body) => {
+        if (body.label === "wall") {
+          Body.setStatic(body, false);
+        }
+      });
     }
   });
 });
