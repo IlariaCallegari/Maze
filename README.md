@@ -2,7 +2,7 @@
 Maze game developed with Vanilla JS
 
 ## Deployment
-To see the game follow this link: https://ilariacallegari.github.io/Maze/ . 
+To play the game follow this link: https://ilariacallegari.github.io/Maze/ . 
 
 ## How to play
 For desktop only.
