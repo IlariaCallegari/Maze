@@ -5,6 +5,9 @@ const cells = 3;
 const width = 600;
 const height = 600;
 
+//define our dimensions for the walls
+const unitLenght = width / cells;
+
 //Boilerplate code
 const engine = Engine.create();
 const { world } = engine;
@@ -12,7 +15,6 @@ const render = Render.create({
   element: document.body,
   engine: engine,
   options: {
-    wireframes: false,
     width,
     height,
   },
@@ -109,3 +111,41 @@ const stepThoroughCell = (row, column) => {
   }
 };
 stepThoroughCell(startRow, startColumn);
+
+//iterate through horizontals to draw the walls
+horizontals.forEach((row, rowIndex) => {
+  row.forEach((open, columnIndex) => {
+    if (open) {
+      return;
+    } else {
+      const wall = Bodies.rectangle(
+        columnIndex * unitLenght + unitLenght / 2,
+        rowIndex * unitLenght + unitLenght,
+        unitLenght,
+        3, {
+            isStatic: true
+        }
+      );
+      World.add(world, wall);
+    }
+  });
+});
+
+//iterate through verticals to draw the walls
+verticals.forEach((row, rowIndex) => {
+  row.forEach((open, columnIndex) => {
+    if (open) {
+      return;
+    } else {
+      const wall = Bodies.rectangle(
+        columnIndex * unitLenght + unitLenght,
+        rowIndex * unitLenght + unitLenght/2,
+        3,
+        unitLenght, {
+            isStatic: true
+        }
+      );
+      World.add(world, wall);
+    }
+  });
+});
