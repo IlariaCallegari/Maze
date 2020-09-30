@@ -1,10 +1,10 @@
 //acquiring properties from Matter
 const { Engine, Render, Runner, World, Bodies, Body, Events } = Matter;
 
-const cellsHorizontal = 30;
-const cellsVertical = 20;
-const width = window.innerWidth - 10;
-const height = window.innerHeight - 10;
+const cellsHorizontal = 3;
+const cellsVertical = 2;
+const width = window.innerWidth;
+const height = window.innerHeight;
 
 //define our dimensions for the walls
 const unitLenghtX = width / cellsHorizontal;
@@ -52,6 +52,7 @@ const shuffle = (arr) => {
   }
   return arr;
 };
+
 //Grid
 const grid = Array(cellsVertical)
   .fill(null)
