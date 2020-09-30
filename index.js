@@ -2,8 +2,8 @@ const newGame = () => {
   //acquiring properties from Matter
   const { Engine, Render, Runner, World, Bodies, Body, Events } = Matter;
 
-  const cellsHorizontal = 3;
-  const cellsVertical = 2;
+  const cellsHorizontal = 20;
+  const cellsVertical = 15;
   const width = window.innerWidth;
   const height = window.innerHeight;
 
